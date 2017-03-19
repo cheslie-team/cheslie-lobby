@@ -32,11 +32,17 @@ lobby.on('players', function (players) {
 
     players.forEach(function (player) {
         var tr = document.createElement('tr'),
-            name = document.createElement('td');
+            name = document.createElement('td'),
+            playingAs = document.createElement('td'),
+            game = document.createElement('td');
         
         name.textContent = player.name;
+        playingAs.textContent = player.playingAs;
+        game.textContent = player.game;
         
         tr.appendChild(name);
+        tr.appendChild(playingAs);
+        tr.appendChild(game);
         tbody.appendChild(tr);
     });
 });
