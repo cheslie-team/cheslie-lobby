@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/cheslie-team/cheslie-lobby/issues"
   },
-  "homepage": "https://github.com/cheslie-team/cheslie-lobby#readme"
+  "homepage": "https://github.com/cheslie-team/cheslie-lobby#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3"
+  }
 }

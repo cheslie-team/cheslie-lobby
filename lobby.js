@@ -4,16 +4,48 @@ var express = require('express'),
 	io = require('socket.io')(http),
 	port = 3030,
 	
-	players = [{name: 'RndJesus_1'}, {name: 'RndJesus_2'}];
+	players = [];
 
 io.on('connect', function (socket) {
-    console.log('Player or lobby connected');
-    
-    io.emit('players', players);
-});
+    var id = socket.id;
 
-io.on('join', function (opponents) {
-	console.log('Opponents joining game');
+    console.log('Player/viewer connected');
+    
+    socket.on('players', function () {
+    	io.emit('players', players);
+    });
+	
+	socket.on('enter', function (name) {
+		console.log(name + ' entered the lobby');
+		players.push({name: name, id: id});
+		io.emit('players', players);
+	});
+
+	socket.on('join', function (opponents) {
+		console.log('Opponents joining game: ' + opponents);
+
+		console.log(players);
+		
+		var white = players.find(function (player) {
+			return player.name === opponents.white;
+		});
+		console.log('White: ' + white);
+
+		var black = players.find(function (player) {
+			return player.name === opponents.black;
+		});
+		console.log('Black: ' + black);
+
+		socket.broadcast.to(white.id).emit('join', 'test_game');
+		socket.broadcast.to(black.id).emit('join', 'test_game');
+	});
+
+	socket.on('disconnect', function () {
+		players = players.filter(function (player) {
+			return player.id !== id;
+		});
+		io.emit('players', players);
+	});
 });
 
 app.use('/', express.static('client'));
