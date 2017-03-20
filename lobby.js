@@ -6,12 +6,14 @@ var express = require('express'),
 	port = 3030,
 	
 	players = [];
+	games = [];
 
 io.on('connect', function (socket) {
     console.log('Player/viewer connected');
     
-    socket.on('players', function () {
+    socket.on('update', function () {
     	io.emit('players', players);
+    	io.emit('games', games);
     });
 	
 	socket.on('enter', function (name) {
@@ -40,7 +42,12 @@ io.on('connect', function (socket) {
 		socket.broadcast.to(white.id).emit('join', gameName);
 		socket.broadcast.to(black.id).emit('join', gameName);
 
-		io.emit('players', players);
+		games.push({
+			name: gameName,
+			white: opponents.white,
+			black: opponents.black
+		});
+		io.emit('games', games);
 	});
 
 	socket.on('disconnect', function () {

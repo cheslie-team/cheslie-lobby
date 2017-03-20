@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <title>cheslie-lobby</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/urljs/2.3.1/url.min.js"></script>
   <script src="socket.io/socket.io.js"></script>
 </head>
 
@@ -13,30 +15,14 @@
     <h1>cheslie-lobby</h1>
     
     <h4>Players</h4>
-    <div id="players" class="collection">
-      <a href="#!" class="collection-item">Alvin</a>
-      <a href="#!" class="collection-item active">Alvin</a>
-      <a href="#!" class="collection-item">Alvin</a>
-      <a href="#!" class="collection-item">Alvin</a>
-    </div>
-
-    <h4>New Game</h4>
-    <div class="collection">
-      <a href="#!" class="collection-item">Alvin</a>
-      <a href="#!" class="collection-item active">Alvin</a>
-    </div>
+    <div id="players" class="collection"></div>
     
     <div class="row">
       <a class="waves-effect waves-light btn" onclick="joinGame()">Start Game</a>
     </div>
 
-    <h4>Active Games</h4>
-    <div class="collection">
-      <a href="#!" class="collection-item">Alvin</a>
-      <a href="#!" class="collection-item active">Alvin</a>
-      <a href="#!" class="collection-item">Alvin</a>
-      <a href="#!" class="collection-item">Alvin</a>
-    </div>
+    <h4>Games</h4>
+    <div id="games" class="collection"></div>
   </div>
 
 </div>
