@@ -4,7 +4,7 @@ var express = require('express'),
 	io = require('socket.io')(http),
 	generate = require('project-name-generator');
 	game = require('socket.io-client')('http://localhost:3000')
-	port = 3030,
+	port = process.env.PORT || 8080,
 	
 	players = [];
 	games = [];
