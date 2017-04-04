@@ -1,40 +1,60 @@
-var lobby = io();
+var lobby = io(),
+
+    displayPlayers = function () {},
+
+    joinGame = function () {
+        var opponents = Url.parseQuery(Url.hash());
+        if (!opponents.white || !opponents.black) {
+            alert('Not enough players...');
+            return;
+        }
+        lobby.emit('join', {
+            white: opponents.white,
+            black: opponents.black
+        });
+    };
+
+window.onhashchange = function () {
+    displayPlayers();
+};
 
 lobby.on('connect', function () {
-    console.log("Connected to lobby");
     lobby.emit('update');
 });
 
 lobby.on('players', function (players) {
-    var collection = document.getElementById('players');
-    collection.innerHTML = '';
+    displayPlayers = function () {
+        var collection = document.getElementById('players');
+        collection.innerHTML = '';
 
-    players.forEach(function (player) {
-        var contestants = Url.parseQuery(),
-            item = document.createElement('a');
-        item.setAttribute('class', 'collection-item');
+        players.forEach(function (player) {
+            var opponents = Url.parseQuery(Url.hash()),
+                item = document.createElement('a');
+        
+            item.setAttribute('class', 'collection-item');
 
-        if (contestants.white === player.name) {
-            item.setAttribute('class', 'collection-item active');
-            delete contestants.white
-        }
-        else if (contestants.black === player.name) {
-            item.setAttribute('class', 'collection-item active');
-            delete contestants.black
-        }
-        else if (!contestants.white) {
-            console.log(player.name);
-            contestants.white = player.name;
-        }
-        else {
-            console.log(player.name);
-            contestants.black = player.name;
-        }
+            if (opponents.white === player.name) {
+                item.setAttribute('class', 'collection-item active');
+                delete opponents.white
+            }
+            else if (opponents.black === player.name) {
+                item.setAttribute('class', 'collection-item active');
+                delete opponents.black
+            }
+            else if (!opponents.white) {
+                opponents.white = player.name;
+            }
+            else {
+                opponents.black = player.name;
+            }
 
-        item.setAttribute('href', '?' + Url.stringify(contestants));
-        item.textContent = player.name;
-        collection.appendChild(item);
-    });
+            item.setAttribute('href', '#' + Url.stringify(opponents));
+            item.textContent = player.name;
+            collection.appendChild(item);
+        });
+    };
+
+    displayPlayers();
 });
 
 lobby.on('games', function (games) {
@@ -45,21 +65,10 @@ lobby.on('games', function (games) {
         var item = document.createElement('a');
     
         item.setAttribute('class', 'collection-item');
-        item.setAttribute('href', 'http://localhost:8080/#' + game.name);
+        item.setAttribute('href', 'http://localhost:8080/#' + game.id);
         item.setAttribute('target', '_blank');
         item.textContent = game.white + ' vs ' + game.black;
         collection.appendChild(item);    
     });
 });
 
-var joinGame = function () {
-    var contestants = Url.parseQuery();
-    if (!contestants.white || !contestants.black) {
-        alert('Not enough players...');
-        return;
-    }
-    lobby.emit('join', {
-        white: contestants.white,
-        black: contestants.black
-    });
-};

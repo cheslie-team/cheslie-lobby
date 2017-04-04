@@ -3,17 +3,51 @@ var express = require('express'),
 	http = require('http').Server(app),
 	io = require('socket.io')(http),
 	generate = require('project-name-generator');
+	game = require('socket.io-client')('http://localhost:3000')
 	port = 3030,
 	
 	players = [];
 	games = [];
+
+var activeGames = function () {
+	return games.filter(function (game) {
+		return game.state = 'started';
+	});
+};
+
+game.on('connect', function () {
+	console.log('Conntected to game');
+	game.emit('subscribe');
+});
+
+game.on('started', function (gameId) {
+	var game = games.find(function (game) {
+		return game.id = gameId;
+	});
+	game.state = 'started';
+
+	io.emit('games', activeGames());
+});
+
+game.on('ended', function (ending) {
+	games = games.filter(function (game) {
+		return game.id !== ending.id;
+	});
+
+	io.emit('games', activeGames());
+});
+
+game.on('disconnect', function () {
+	games = [];
+	io.emit('games', activeGames());
+});
 
 io.on('connect', function (socket) {
     console.log('Player/viewer connected');
     
     socket.on('update', function () {
     	io.emit('players', players);
-    	io.emit('games', games);
+    	io.emit('games', activeGames());
     });
 	
 	socket.on('enter', function (name) {
@@ -23,7 +57,7 @@ io.on('connect', function (socket) {
 	});
 
 	socket.on('join', function (opponents) {
-		var gameName = generate().dashed,
+		var gameId = generate().dashed,
 			white = players.find(function (player) {
 				return player.name === opponents.white;
 			}),
@@ -31,23 +65,15 @@ io.on('connect', function (socket) {
 				return player.name === opponents.black;
 			});
 
-		console.log('Opponents joining game: ' + gameName);
-		
-		white.playingAs = 'white';
-		white.game = gameName;
-
-		black.playingAs = 'black';
-		black.game = gameName;
-
-		socket.broadcast.to(white.id).emit('join', gameName);
-		socket.broadcast.to(black.id).emit('join', gameName);
-
 		games.push({
-			name: gameName,
-			white: opponents.white,
-			black: opponents.black
+			id: gameId,
+			white: white.name,
+			black: black.name,
+			state: 'starting'
 		});
-		io.emit('games', games);
+
+		socket.broadcast.to(black.id).emit('join', gameId);
+		socket.broadcast.to(white.id).emit('join', gameId);
 	});
 
 	socket.on('disconnect', function () {
