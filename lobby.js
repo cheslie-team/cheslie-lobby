@@ -75,6 +75,8 @@ io.on('connect', function (socket) {
 
 		socket.broadcast.to(black.id).emit('join', gameId);
 		socket.broadcast.to(white.id).emit('join', gameId);
+
+		io.emit('games', activeGames());
 	});
 
 	socket.on('disconnect', function () {
