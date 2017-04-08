@@ -5,6 +5,7 @@ var express = require('express'),
 	generate = require('project-name-generator');
 	game = require('socket.io-client')('http://localhost:3000')
 	port = process.env.PORT || 8080,
+	boardUrl = process.env.BOARD_URL || 'http://localhost:8081',
 	
 	players = [];
 	games = [];
@@ -86,6 +87,10 @@ io.on('connect', function (socket) {
 });
 
 app.use('/', express.static('client'));
+
+app.get('/redirect-to-game', function (req, res) {
+	res.redirect(boardUrl + '#' + req.query.game)
+});
 
 http.listen(port, function () {
     console.log('Running our app at http://localhost:' + port)
