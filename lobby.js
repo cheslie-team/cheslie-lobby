@@ -77,6 +77,7 @@ io.on('connect', function (socket) {
 	});
 
 	socket.on('disconnect', function () {
+		console.log('Player left the lobby');
 		players = players.filter(function (player) {
 			return player.id !== socket.id;
 		});
