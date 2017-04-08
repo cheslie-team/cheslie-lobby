@@ -65,7 +65,7 @@ lobby.on('games', function (games) {
         var item = document.createElement('a');
     
         item.setAttribute('class', 'collection-item');
-        item.setAttribute('href', 'https://cheslie-board.herokuapp.com/#' + game.id);
+        item.setAttribute('href', 'http://localhost:8081/#' + game.id);
         item.setAttribute('target', '_blank');
         item.textContent = game.white + ' vs ' + game.black;
         collection.appendChild(item);    
