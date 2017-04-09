@@ -1,13 +1,12 @@
-var express = require('express'),
+var config = require('cheslie-config'),
+	express = require('express'),
 	app = express(),
 	http = require('http').Server(app),
 	io = require('socket.io')(http),
-	generate = require('project-name-generator');
-	game = require('socket.io-client')('http://localhost:3000')
-	port = process.env.PORT || 8080,
-	boardUrl = process.env.BOARD_URL || 'http://localhost:8081',
-	
-	players = [];
+	generate = require('project-name-generator'),
+	game = require('socket.io-client')(config.game.url),
+
+	players = [],
 	games = [];
 
 var activeGames = function () {
@@ -44,16 +43,16 @@ game.on('disconnect', function () {
 });
 
 io.on('connect', function (socket) {
-    console.log('Player/viewer connected');
-    
-    socket.on('update', function () {
-    	io.emit('players', players);
-    	io.emit('games', activeGames());
-    });
-	
+	console.log('Player/viewer connected');
+
+	socket.on('update', function () {
+		io.emit('players', players);
+		io.emit('games', activeGames());
+	});
+
 	socket.on('enter', function (name) {
 		console.log(name + ' entered the lobby');
-		players.push({name: name, id: socket.id});
+		players.push({ name: name, id: socket.id });
 		io.emit('players', players);
 	});
 
@@ -75,12 +74,9 @@ io.on('connect', function (socket) {
 
 		socket.broadcast.to(black.id).emit('join', gameId);
 		socket.broadcast.to(white.id).emit('join', gameId);
-
-		io.emit('games', activeGames());
 	});
 
 	socket.on('disconnect', function () {
-		console.log('Player left the lobby');
 		players = players.filter(function (player) {
 			return player.id !== socket.id;
 		});
@@ -91,9 +87,9 @@ io.on('connect', function (socket) {
 app.use('/', express.static('client'));
 
 app.get('/redirect-to-game', function (req, res) {
-	res.redirect(boardUrl + '#' + req.query.game)
+	res.redirect(config.board.url + '#' + req.query.game)
 });
 
-http.listen(port, function () {
-    console.log('Running our app at http://localhost:' + port)
+http.listen(config.lobby.port, function () {
+	console.log('Running our app at http://localhost:' + config.lobby.port)
 });
