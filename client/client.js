@@ -67,7 +67,7 @@ lobby.on('games', function (games) {
         item.setAttribute('class', 'collection-item');
         item.setAttribute('href', '/redirect-to-game?game=' + game.id);
         item.setAttribute('target', '_blank');
-        item.textContent = game.white + ' vs ' + game.black;
+        item.textContent = game.white + ' (white) vs ' + game.black + ' (black)';
         collection.appendChild(item);    
     });
 });
