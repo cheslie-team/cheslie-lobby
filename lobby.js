@@ -72,10 +72,10 @@ io.on('connect', function (socket) {
 			state: 'starting'
 		});
 
-		socket.broadcast.to(white.id).emit('join', gameId);
+		socket.broadcast.to(black.id).emit('join', gameId);
 		// Temporary hack to control who gets to be white and black
 		setTimeout(function () {
-			socket.broadcast.to(black.id).emit('join', gameId);
+			socket.broadcast.to(white.id).emit('join', gameId);
 		}, 1000);
 	});
 
