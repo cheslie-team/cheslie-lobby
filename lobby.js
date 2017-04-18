@@ -20,9 +20,9 @@ game.on('connect', function () {
 	game.emit('subscribe');
 });
 
-game.on('started', function (gameId) {
+game.on('started', function (startedGame) {
 	var game = games.find(function (game) {
-		return game.id = gameId;
+		return game.id = startedGame.id;
 	});
 	game.state = 'started';
 
